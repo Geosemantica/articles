@@ -148,3 +148,9 @@ There are 3 functional roles:
 <!-- MARKDOWN LINKS & IMAGES -->
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://me.linkedin.com/company/geosemantica
+
+
+## License
+
+This code is private and proprietary. It cannot be copied, modified, distributed, or used under any circumstances without explicit permission from the owner. Unauthorized use of this code is strictly prohibited.
+
