@@ -1,0 +1,43 @@
+services:
+
+  db:
+    image: postgres:17.0
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=article_service
+      - POSTGRES_PASSWORD=article_service
+      - POSTGRES_DATABASE=article_service
+
+  rabbitmq:
+    image: rabbitmq:3.12.8-management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=article_service
+      - RABBITMQ_DEFAULT_PASS=article_service
+      - RABBITMQ_PORT=5672
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+
+  app:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/article_service
+      - DB_USERNAME=article_service
+      - DB_PASSWORD=article_service
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=article_service
+      - RABBITMQ_PASSWORD=article_service
+    ports:
+      - '8090:8090'
+    depends_on:
+      - db
+      - rabbitmq
+
+volumes:
+  cache:
+    driver: local

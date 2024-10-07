@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>article-service-demo</artifactId>
+    <groupId>com.geosemantica</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <java.version>21</java.version>
+        <postgresql.version>42.6.0</postgresql.version>
+        <flyway-core.version>10.0.0</flyway-core.version>
+        <jackson-datatype-jsr.version>2.13.4</jackson-datatype-jsr.version>
+        <java-jwt.version>4.4.0</java-jwt.version>
+        <security-oauth2.version>6.2.0</security-oauth2.version>
+        <jts-core.version>1.19.0</jts-core.version>
+    </properties>
+
+    <modules>
+        <module>dal</module>
+        <module>service</module>
+        <module>message-broker</module>
+        <module>message-broker-facades</module>
+        <module>facades</module>
+        <module>web</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

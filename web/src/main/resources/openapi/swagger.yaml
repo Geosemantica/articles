@@ -1,0 +1,467 @@
+openapi: 3.0.3
+servers:
+  - url: https://article-service-dev.geosemantica.com/api/v1/
+    description: Development server
+  - url: https://article-service-stage.geosemantica.com/api/v1/
+    description: Staging server
+info:
+  title: Article service API
+  description: Article service API reference
+  version: 1.0.0
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: articles
+    description: Methods for working with articles
+  - name: comments
+    description: Methods for working with comments
+paths:
+  /articles:
+    post:
+      tags:
+        - articles
+      summary: Create a new article
+      parameters:
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+            format: jwt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 255
+                  nullable: false
+                text:
+                  type: string
+                  nullable: false
+              required:
+                - title
+                - text
+      responses:
+        201:
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/article'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /articles/{articleId}:
+    put:
+      tags:
+        - articles
+      summary: Update an article
+      parameters:
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+            format: jwt
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 255
+                  nullable: false
+                text:
+                  type: string
+                  nullable: false
+              required:
+                - title
+                - text
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/article'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /articles/feed:
+    get:
+      tags:
+        - articles
+      summary: Get a feed of articles
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: Page number
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 20
+          description: Maximum number of elements
+          required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/article'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /comments:
+    post:
+      tags:
+        - comments
+      summary: Create a new comment
+      parameters:
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+            format: jwt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replyTo:
+                  type: integer
+                  description: Comment id if this comment is a reply
+                  nullable: true
+                text:
+                  type: string
+                  nullable: false
+              required:
+                - text
+      responses:
+        201:
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/comment'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /comments/{commentId}:
+    put:
+      tags:
+        - comments
+      summary: Update a comment
+      parameters:
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+            format: jwt
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replyTo:
+                  type: integer
+                  description: Comment id if this comment is a reply
+                  nullable: true
+                text:
+                  type: string
+                  nullable: false
+              required:
+                - text
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/comment'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - comments
+      summary: Delete a comment
+      parameters:
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+            format: jwt
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/comment'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/AccessDenied'
+        404:
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /articles/{articleId}/comments:
+    get:
+      tags:
+        - comments
+      summary: Get top level comments for an article
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: Page number
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 20
+          description: Maximum number of elements
+          required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/comment'
+        404:
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+  /comments/{commentId}/replies:
+    get:
+      tags:
+        - comments
+      summary: Get top level replies for a comment
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: Page number
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 20
+          description: Maximum number of elements
+          required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/comment'
+        404:
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Access-Token
+  schemas:
+    comment:
+      type: object
+      properties:
+        text:
+          type: string
+          nullable: false
+        authorId:
+          type: string
+          format: uuid
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+        replyTo:
+          type: integer
+          description: Comment id if this comment is a reply
+          nullable: true
+    article:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: false
+        title:
+          type: string
+          nullable: false
+        text:
+          type: string
+          nullable: false
+        authorId:
+          type: string
+          format: uuid
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+  responses:
+    ServerError:
+      description: Server side error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message displayed to the user
+                example: No connection to database
+              trace:
+                type: string
+                description: Error logs for system administrator
+                example: 'Caused by: java.sql.SQLTransientConnectionException: Connection is not available, request timed out after 30001ms.'
+    Unauthorized:
+      description: Authorization is required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message displayed to the user
+                example: Authorization is required
+              trace:
+                type: string
+                description: Error logs for system administrator
+    AccessDenied:
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message displayed to the user
+                example: 'You do not have permission to perform this action.'
+              trace:
+                type: string
+                description: Error logs for system administrator
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message displayed to the user
+                example: 'There is not found entity with such id.'
+              trace:
+                type: string
+                description: Error logs for system administrator
+    BadRequest:
+      description: The server cannot or will not process the request due to a client error (invalid request syntax)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message displayed to the user
+                example: 'Invalid request syntax'
+              trace:
+                type: string
+                description: Error logs for system administrator
